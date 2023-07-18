@@ -6,7 +6,8 @@ import './App.css'
 import Table from "./components/Table";
 import { SelectColumnFilter } from "./components/Table";
 
-const getData = () => [
+const getData = () => {
+  const data = [
   {
     name: "Jane Cooper",
     email: "jane.cooper@example.com",
@@ -73,7 +74,10 @@ const getData = () => [
       "https://images.unsplash.com/photo-1566492031773-4f4e44671857?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60",
     age: 24,
     },
-];
+  ]
+  return [...data, ...data, ...data]
+
+};
 
 
 

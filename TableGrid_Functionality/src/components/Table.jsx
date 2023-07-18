@@ -1,6 +1,6 @@
 // src/Table.js
 import React, {useState}from "react";
-import { useTable, useGlobalFilter, useAsyncDebounce, useFilters, useSortBy } from 'react-table'  // new
+import { useTable, useGlobalFilter, useAsyncDebounce, useFilters, useSortBy, usePagination } from 'react-table'  // new
 import regeneratorRuntime from "regenerator-runtime";
 
 
@@ -85,6 +85,22 @@ export function SelectColumnFilter({
 function Table({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, 
+   
+
+    //new
+    page, // Instead of using 'rows', we'll use page,
+    // which has only the rows for the active page
+    
+    // The rest of these things are super handy, too ;)
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+
     state,
     preGlobalFilteredRows,
     setGlobalFilter,
@@ -94,7 +110,8 @@ function Table({ columns, data }) {
   },
     useGlobalFilter,
     useFilters,
-    useSortBy
+    useSortBy,
+    usePagination
   );
 
   // Render the UI for your table
@@ -143,7 +160,7 @@ function Table({ columns, data }) {
           ))}
         </thead>
       <tbody {...getTableBodyProps()}>
-        {rows.map((row, i) => {
+        {page.map((row, i) => {   // replace row with page
           prepareRow(row);
           return (
             <tr {...row.getRowProps()}>
@@ -155,6 +172,41 @@ function Table({ columns, data }) {
         })}
       </tbody>
     </table>
+
+    {/* pagination component */}
+
+    <div className="pagination">
+        <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+          {'<<'}
+        </button>{' '}
+        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+          {'<'}
+        </button>{' '}
+        <button onClick={() => nextPage()} disabled={!canNextPage}>
+          {'>'}
+        </button>{' '}
+        <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+          {'>>'}
+        </button>{' '}
+        <span>
+          Page{' '}
+          <strong>
+            {state.pageIndex + 1} of {pageOptions.length}
+          </strong>{' '}
+        </span>
+        <select
+          value={state.pageSize}
+          onChange={e => {
+              setPageSize(Number(e.target.value))
+          }}
+        >
+          {[5, 10, 20].map(pageSize => (
+              <option key={pageSize} value={pageSize}>
+              Show {pageSize}
+            </option>
+          ))}
+        </select>
+      </div>
 
     {/* display the value of state filters */}
     <div>
